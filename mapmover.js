@@ -194,7 +194,7 @@ Mapmover.prototype.setScale = function(scale) {
     this.changed()
 }
 
+
 Mapmover.prototype.changed = function() {
     this._changed()
-
 }

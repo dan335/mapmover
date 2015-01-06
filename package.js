@@ -1,7 +1,7 @@
 Package.describe({
   name: 'danimal:mapmover',
-  summary: 'Handle dragging and scaling.',
-  version: '1.0.0',
+  summary: 'Handle dragging and scaling of an element.',
+  version: '1.0.1',
   git: 'https://github.com/dan335/mapmover'
 });
 
