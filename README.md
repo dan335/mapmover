@@ -1,7 +1,7 @@
 Mapmover
 ---
 
-Handle dragging and scaling of an element.  Works with mouse and touch events.
+Handle dragging and scaling of an element.  Works with mouse and touch events.  Shift+mousewheel scales.
 
     Meteor add danimal:mapmover
 
