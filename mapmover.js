@@ -1,4 +1,4 @@
-Mapmover = function(jquerySelector, callback) {
+Mapmover = function(beginDragCallback, callback, endDragCallback) {
     var self = this
 
     self.scale = 1
@@ -10,6 +10,7 @@ Mapmover = function(jquerySelector, callback) {
     self.throttle = 100
 
     self.isDraggingOrScaling = false;
+    self.isDraggingOrScalingReactive = new ReactiveVar(false);
 
     // 0.5 = scale half as much, 2 = scale twice as much
     self.touchScaleSensitivity = 0.5
@@ -18,9 +19,11 @@ Mapmover = function(jquerySelector, callback) {
     self.minScale = 0.2
     self.maxScale = 2
 
-    self.elm = jquerySelector || $(window)
+    self.elm = null
 
     self.callback = callback
+    self.beginDragCallback = beginDragCallback
+    self.endDragCallback = endDragCallback
 
     self._changed = _.throttle(function() {
         self.callback(self.moveX, self.moveY, self.scale)
@@ -65,7 +68,10 @@ Mapmover.prototype.stopAllEvents = function() {
     var self = this
     self.elm.off('mousemove touchmove mouseup mouseleave touchend touchcancel')
     // delay 100ms to prevent click at end of dragging
-    Meteor.setTimeout(function() { self.isDraggingOrScaling = false }, 100)
+    Meteor.setTimeout(function() {
+        self.isDraggingOrScaling = false
+        self.isDraggingOrScalingReactive.set(false)
+    }, 10)
 }
 
 
@@ -87,11 +93,18 @@ Mapmover.prototype.getCursorPosition = function(event) {
 Mapmover.prototype.stop = function() {
     this.elm.off('mousedown touchstart mousewheel DOMMouseScroll mousemove touchmove mouseup mouseleave touchend touchcancel')
     this.isDraggingOrScaling = false
+    this.isDraggingOrScalingReactive.set(false)
 }
 
 
-Mapmover.prototype.start = function() {
+Mapmover.prototype.start = function(jquerySelector) {
     var self = this
+
+    if (!jquerySelector || jquerySelector.length == 0) {
+        throw new Meteor.Error('The start function requires a jquery selector. Mapmover.start($(window))')
+    }
+
+    self.elm = jquerySelector
 
     // mousewheel
     self.elm.on('mousewheel DOMMouseScroll', function(event) {
@@ -112,6 +125,7 @@ Mapmover.prototype.start = function() {
 
     // mouse and touch
     self.elm.on('mousedown touchstart', function(event) {
+
         // cancel if right click
         if (event.type == 'mousedown' && event.which != 1) {
             return false
@@ -138,6 +152,7 @@ Mapmover.prototype.start = function() {
                     var lastTouchDistance = self.getDistanceBetweenTouches(event)
                     if (lastTouchDistance) {
                         self.isDraggingOrScaling = true
+                        self.isDraggingOrScalingReactive.set(true)
 
                         self.elm.on('touchmove', function moveHandler(event) {
                             var distance = self.getDistanceBetweenTouches(event)
@@ -160,6 +175,8 @@ Mapmover.prototype.start = function() {
 
                     var lastCursorPos = self.getCursorPosition(event)
                     self.isDraggingOrScaling = true
+                    self.isDraggingOrScalingReactive.set(true)
+                    self.beginDragCallback(self.moveX, self.moveY, self.scale)
 
                     self.elm.on('mousemove touchmove', function moveHandler(event) {
                         var curPos = self.getCursorPosition(event)
@@ -173,6 +190,7 @@ Mapmover.prototype.start = function() {
 
                     self.elm.on('mouseup mouseleave touchend touchcancel', function stopDragHandler(event) {
                         self.stopAllEvents()
+                        self.endDragCallback(self.moveX, self.moveY, self.scale)
                     })
                 }
             }
