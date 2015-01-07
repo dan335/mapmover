@@ -36,7 +36,7 @@ Exposes Mapmover( beginDragCallback(x,y,scale), callback(x,y,scale), endDragCall
     // stops the event handlers
     mapmover.stop()
 
-    // is the users is currently dragging or scaling
+    // is the user currently dragging or scaling
     // useful for canceling conflicting events
     mapmover.isDraggingOrScaling
 
