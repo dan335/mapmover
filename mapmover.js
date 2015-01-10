@@ -125,6 +125,7 @@ Mapmover.prototype.start = function(jquerySelector) {
 
     // mouse and touch
     self.elm.on('mousedown touchstart', function(event) {
+        event.preventDefault()
 
         // cancel if right click
         if (event.type == 'mousedown' && event.which != 1) {
