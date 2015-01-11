@@ -123,9 +123,17 @@ Mapmover.prototype.start = function(jquerySelector) {
     })
 
 
+    // firefox drags images
+    // disable dragging of images
+    self.elm.on('dragstart', function(event) {
+        if (e.target.nodeName.toUpperCase() == "IMG") {
+            return false;
+        }
+    })
+
+
     // mouse and touch
     self.elm.on('mousedown touchstart', function(event) {
-        event.preventDefault()
 
         // cancel if right click
         if (event.type == 'mousedown' && event.which != 1) {
