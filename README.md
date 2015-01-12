@@ -1,7 +1,7 @@
 Mapmover
 ---
 
-Meteor package to handle dragging and scaling of an element.  Works with mouse and touch events.  Shift+mousewheel scales.
+Meteor package to handle dragging and scaling of an element.  Works with mouse and touch events.  Shift+ctrl+mousewheel scales.
 
     Meteor add danimal:mapmover
 

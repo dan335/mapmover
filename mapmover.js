@@ -108,7 +108,7 @@ Mapmover.prototype.start = function(jquerySelector) {
 
     // mousewheel
     self.elm.on('mousewheel DOMMouseScroll', function(event) {
-        if (event.shiftKey) {
+        if (event.shiftKey && event.ctrlKey) {
             var normalized;
             if (event.originalEvent.wheelDelta) {
                 normalized = (event.originalEvent.wheelDelta % 120 - 0) == -0 ? event.originalEvent.wheelDelta / 120 : event.wheelDelta.originalEvent / 12;
@@ -123,17 +123,13 @@ Mapmover.prototype.start = function(jquerySelector) {
     })
 
 
-    // firefox drags images
-    // disable dragging of images
-    self.elm.on('dragstart', function(event) {
-        if (e.target.nodeName.toUpperCase() == "IMG") {
-            return false;
-        }
-    })
 
 
     // mouse and touch
     self.elm.on('mousedown touchstart', function(event) {
+        if (event.type == 'mousedown') {
+            event.preventDefault()
+        }
 
         // cancel if right click
         if (event.type == 'mousedown' && event.which != 1) {
