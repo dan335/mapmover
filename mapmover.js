@@ -127,7 +127,7 @@ Mapmover.prototype.start = function(jquerySelector) {
 
     // mouse and touch
     self.elm.on('mousedown touchstart', function(event) {
-        
+
         self.isDraggingOrScaling = false
         self.isDraggingOrScalingReactive.set(false)
 
@@ -169,6 +169,7 @@ Mapmover.prototype.start = function(jquerySelector) {
                     if (lastTouchDistance) {
 
                         self.elm.on('touchmove', function moveHandler(event) {
+                            event.preventDefault()
                             var distance = self.getDistanceBetweenTouches(event)
                             var dif = distance / lastTouchDistance
                             dif = (dif - 1) * self.touchScaleSensitivity + 1
@@ -194,6 +195,7 @@ Mapmover.prototype.start = function(jquerySelector) {
                     self.beginDragCallback(self.moveX, self.moveY, self.scale)
 
                     self.elm.on('mousemove touchmove', function moveHandler(event) {
+                        event.preventDefault()
                         var curPos = self.getCursorPosition(event)
                         var deltaX = curPos.x - lastCursorPos.x
                         var deltaY = curPos.y - lastCursorPos.y
