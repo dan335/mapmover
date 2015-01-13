@@ -127,6 +127,10 @@ Mapmover.prototype.start = function(jquerySelector) {
 
     // mouse and touch
     self.elm.on('mousedown touchstart', function(event) {
+        
+        self.isDraggingOrScaling = false
+        self.isDraggingOrScalingReactive.set(false)
+
         if (event.type == 'mousedown') {
             event.preventDefault()
         }
@@ -147,6 +151,13 @@ Mapmover.prototype.start = function(jquerySelector) {
                 $(canvas).off('mouseup mousemove touchend touchmove touchcancel', handler)
 
             } else {
+
+                // delay this to make clicking easier
+                var setDragTimeout = Meteor.setTimeout(function() {
+                    self.isDraggingOrScaling = true
+                    self.isDraggingOrScalingReactive.set(true)
+                }, 150)
+
                 // drag or scale
                 self.elm.off('mouseup mousemove touchend touchmove touchcancel', handler)
 
@@ -156,8 +167,6 @@ Mapmover.prototype.start = function(jquerySelector) {
 
                     var lastTouchDistance = self.getDistanceBetweenTouches(event)
                     if (lastTouchDistance) {
-                        self.isDraggingOrScaling = true
-                        self.isDraggingOrScalingReactive.set(true)
 
                         self.elm.on('touchmove', function moveHandler(event) {
                             var distance = self.getDistanceBetweenTouches(event)
@@ -169,18 +178,19 @@ Mapmover.prototype.start = function(jquerySelector) {
 
                         self.elm.on('mouseup mouseleave touchend touchcancel', function stopDragHandler(event) {
                             self.stopAllEvents()
+                            Meteor.clearTimeout(setDragTimeout)
                         })
 
                     } else {
                         self.stopAllEvents()
+                        Meteor.clearTimeout(setDragTimeout)
                     }
 
                 } else {
                     // dragging
 
                     var lastCursorPos = self.getCursorPosition(event)
-                    self.isDraggingOrScaling = true
-                    self.isDraggingOrScalingReactive.set(true)
+
                     self.beginDragCallback(self.moveX, self.moveY, self.scale)
 
                     self.elm.on('mousemove touchmove', function moveHandler(event) {
@@ -196,6 +206,7 @@ Mapmover.prototype.start = function(jquerySelector) {
                     self.elm.on('mouseup mouseleave touchend touchcancel', function stopDragHandler(event) {
                         self.stopAllEvents()
                         self.endDragCallback(self.moveX, self.moveY, self.scale)
+                        Meteor.clearTimeout(setDragTimeout)
                     })
                 }
             }
