@@ -148,7 +148,7 @@ Mapmover.prototype.start = function(jquerySelector) {
 
             } else if (event.type == 'touchcancel') {
                 // cancel?
-                $(canvas).off('mouseup mousemove touchend touchmove touchcancel', handler)
+                self.elm.off('mouseup mousemove touchend touchmove touchcancel', handler)
 
             } else {
 
@@ -170,6 +170,7 @@ Mapmover.prototype.start = function(jquerySelector) {
 
                         self.elm.on('touchmove', function moveHandler(event) {
                             event.preventDefault()
+                            event.stopPropagation()
                             var distance = self.getDistanceBetweenTouches(event)
                             var dif = distance / lastTouchDistance
                             dif = (dif - 1) * self.touchScaleSensitivity + 1
@@ -196,6 +197,7 @@ Mapmover.prototype.start = function(jquerySelector) {
 
                     self.elm.on('mousemove touchmove', function moveHandler(event) {
                         event.preventDefault()
+                        event.stopPropagation()
                         var curPos = self.getCursorPosition(event)
                         var deltaX = curPos.x - lastCursorPos.x
                         var deltaY = curPos.y - lastCursorPos.y
