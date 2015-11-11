@@ -1,5 +1,5 @@
-danimal:mapmover@1.0.8
-meteor@1.1.6
-reactive-var@1.0.5
-tracker@1.0.7
-underscore@1.0.3
+danimal:mapmover@1.0.10
+meteor@1.1.10
+reactive-var@1.0.6
+tracker@1.0.9
+underscore@1.0.4
